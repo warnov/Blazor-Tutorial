@@ -1,0 +1,36 @@
+﻿These notes are taken following the tutorial found in:
+https://code-maze.com/blazor-components/
+
+
+Blazor Components:
+========================================
+
+* Are the key pieces in this technology
+* They are composed by HTML elements and code
+* Of course HTML elements need to be configured to present some state to the UI
+		This visual/content configuration has to be dynamic
+		Dynamic behaviour can be achieved by indicating within the elements some variables thar can be configured and injected from the container that will use the component.
+		Dynamic Content:
+				Just declare that the content depends on a @parameter. And then in the @code section specify a c# property that will yield the required content. Those c# properties has to be decorated with the [Parameter] decorator
+		Elements style:
+				Can be bound to a Dictionary<string, object> that will contain the key/values for all the properties that the elements could have if the (CaptureUnmatchedValues=true) modificator for the [Parameter] decorator is set:
+				[Parameter(CaptureUnmatchedValues = true)]
+				public Dictionary<string, object> AdditionalAttributes { get; set; }
+
+		Then, the container (this is: the component caller), could specify those attributes from the component declaration itself:
+		<Home Title="Welcome to the BlazorProducts.Client application." 
+      src="/assets/products.png" alt="products image for the Home component"></Home>
+			And those attributes would be injected wherever they apply in a normal HTML
+
+		The container could also determine a property of type Dictionary<string, object> that could have the additional attributes listed inside so the code could be more readable:
+		<Home @attributes="AdditionalAttributes"></Home>
+		
+		@code{
+    public Dictionary<string, object> AdditionalAttributes { get; set; } = new Dictionary<string, object>
+    {
+        { "src", "/assets/products.png" },
+        { "alt", "products image for the Home component" }
+    };
+
+		In this case, the container creates the dictionary that the comnponent expects as a parameter. And de component then distributes the key/values within its HTML elements
+
