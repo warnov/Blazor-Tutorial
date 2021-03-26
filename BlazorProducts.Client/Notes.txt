@@ -13,15 +13,15 @@ Blazor Components:
 
 		Dynamic Content:
 				- Just declare that the content depends on a @parameter. And then in the @code section specify a c# property that will yield the required content. Those c# properties has to be decorated with the [Parameter] decorator
-				- When declared inside a component, it is just necessary to set the value of the parameter as it was just another html attribute of the component.
+				- When declared inside a component, it is just necessary to set the value of the parameter as if it was just another html attribute of the component.
 				- Even when it is good for simple pieces of content, when trying to pass more complex content through a parameter it could be hard to read/mantain. For this purpose we can use the RenderFragment parameter that can represent plain text, html, or whole other components
 
-				RenderFragment: By default, it thakes the ChildContent as the name of the parameter. If you specify another name you have to indicate the custom name also in the container. 
+				RenderFragment: By default, it takes the ChildContent as the name of the parameter. If you specify another name you have to indicate the custom name also in the container. If not, you won't need to include it. 
 				
 				Cascading Parameters:				
 						Sometimes, it is desired to have some parameters to be set automatically without declaring them explicitly in each component inside the container.
 						(Useful for example when a given parameter is required to be shared among various components inside a container)
-						To achieve this, the attribute is declared a [CascadigParameter] both in the component and in the container.
+						To achieve this, the attribute is declared as a [CascadigParameter] both in the component and in the container.
 						The container declares the attribute as a field with a given value:
 						private readonly string _color = "#0505b5";
 						While the component declares it as a normal property with the decorator [CascadigParameter] the name of the property is irrelevant, since Blazor just check for the type od the property and there is only one property to pass in cascade.
@@ -50,7 +50,36 @@ Blazor Components:
         { "alt", "products image for the Home component" }
     };
 
-		In this case, the container creates the dictionary that the comnponent expects as a parameter. And de component then distributes the key/values within its HTML elements
+		In this case, the container creates the dictionary that the comnponent expects as a parameter. And the component then distributes the key/values within its HTML elements
 
 
-		
+	Partial Classes
+	========================================
+	Creating a file in the same folder as a .razor component with the same name and the extension .razor.cs will create an association between the component and its code behind, but the "partial" keyword must be added manually
+	
+
+	Blazor Lifecycle
+	=======================================
+	Most Useful:
+	* StateHasChanged: For example to order the hiding of a modal window after the user closes it.
+
+
+	Routing & Navigation
+	=======================================
+	It is enabled by injecting the service NavigationManager in the code of the component:
+	 public NavigationManager NavigationManager { get; set; }
+
+        public void NavigateToHome()
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+		We have other utilities in the navigator like getting the current url: NavigationManager.Uri
+
+
+
+
+	CSS Stylesheets:
+	=======================================
+	Can be created anywhere. Even inside a folder of pages to better organizations using CSS Isolation. Once created, they must referenced from the INDEX.HTML <==== the HTML!!! And the cache of the site must be refreshed in order to get the styling visually updating when rendering the application.
