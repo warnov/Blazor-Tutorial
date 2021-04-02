@@ -109,3 +109,8 @@ Blazor Components:
 	This list of links must be presented using some parameters. Both the links list and parameters should make part of the codebehind of the component. It also have to contain and eventcallback and a method to create the list as well and event to react whwnever a link is clicked by the user.
 
 	This component will be embedded in a container where some initialization parameters are specified. Through the eventcallback, the pagination component tells the container what next page was asked and then then the container calls the service to bring that content. That is done setting the productparameters and with the response from the service, the fresh data is shown to the user.
+
+
+
+	SEARCHING
+	===========================================
