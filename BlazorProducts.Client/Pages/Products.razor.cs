@@ -2,6 +2,7 @@
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -35,5 +36,13 @@ namespace BlazorProducts.Client.Pages
             MetaData = pagingResponse.MetaData;
         }
 
+
+        private async Task SearchChanged(string searchTerm)
+        {
+            Console.WriteLine(searchTerm);
+            _productParameters.PageNumber = 1;
+            _productParameters.SearchTerm = searchTerm;
+            await GetProducts();
+        }
     }
 }

@@ -114,3 +114,12 @@ Blazor Components:
 
 	SEARCHING
 	===========================================
+	It has the same basis from a component/container point of view but ships interesting additions such as the @bind-value attribute: THis provides two-way binding with the property definied in the component. By default the vlue of the property is set when the user leaves the control. But since it is needed that the assignation be made exactly when a new value is written in the control, we use the @bind-value:event attribute set to oninput value (this will reflect a "real-time behavior").
+
+	Additionally we have here a lambda expression that call the callback so whenever a key is pressed the value of the control is passed to the container so it can execute the service call with the current search term.
+
+	
+	Optimizing server use on search:
+	...............................
+
+	The previous method will send a request to the server, each time a user press a ky and this is not optimal at all. So we need to include a timer and whenever a key is pressed the timer is reset. And if no key is pressed anymore, it is time to send the request as the user now is ready to receive results. A prudential time for this wait is 500ms.
