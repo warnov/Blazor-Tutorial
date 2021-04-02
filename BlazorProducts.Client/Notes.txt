@@ -80,6 +80,32 @@ Blazor Components:
 
 
 
+
 	CSS Stylesheets:
 	=======================================
 	Can be created anywhere. Even inside a folder of pages to better organizations using CSS Isolation. Once created, they must referenced from the INDEX.HTML <==== the HTML!!! And the cache of the site must be refreshed in order to get the styling visually updating when rendering the application.
+
+
+
+
+	HTTP CLIENT
+	=======================================
+	It must be registered in the Main method of the Program class (this is done by default).
+	A repository pattern for http data is recommended to be implemented using the httpclient service
+	This repository is registered also in the main method of the program class.
+	The repository is then [Inject]ed in each component that needs it.
+	Within the component code, we call the data in the equivalent event to the old OnLoad of the WebForms: OnInitializedAsync. All of this is configured in a razor page that will contain this razor component which will have the logic and design to present the data. This component will require a [Parameter] field containing the data the container page sends to it. We can configure this 
+
+
+
+	PAGINATION
+	============================================
+	A class for configuring parameters for querying a type of object is recommended to have the mazpagesize, the current page number, the page size. This should be crepart of the shared entities. A metadata class is also recommended to determine info about the current page we are working with. For example CurrentPage, TotalPages, PageSize, TotalCount, HasPrevious, HasNext. THis is used for the client side pagination. Then the back should have a pagedlist of entities with metadata, the paged list representing each page (with metadata and data) and fo course an operation to return a paged list after querynf the repository with the parameters passed. There is an important fact in the controller returning the page and it is adding a header to the response, that will contain the metadata of the page. That header is called "X-Pagination" (this could be simply included in the response as another field, but I guess webassebmly could make some auto operations based on this convention. This header must be added to the cors policy).
+
+	Create query strings easy with a dictionary<string, string>: QueryHelpers.AddQueryString from Microsoft.AspNetCore.WebUtilities.
+
+	The pagination in the client requires a component that will serve as the index of links to show. This component is basically a list of links displayed horizontally witha next and previous.
+
+	This list of links must be presented using some parameters. Both the links list and parameters should make part of the codebehind of the component. It also have to contain and eventcallback and a method to create the list as well and event to react whwnever a link is clicked by the user.
+
+	This component will be embedded in a container where some initialization parameters are specified. Through the eventcallback, the pagination component tells the container what next page was asked and then then the container calls the service to bring that content. That is done setting the productparameters and with the response from the service, the fresh data is shown to the user.
