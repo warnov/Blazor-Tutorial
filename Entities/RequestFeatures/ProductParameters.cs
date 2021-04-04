@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Entities.RequestFeatures
+﻿namespace Entities.RequestFeatures
 {
     public class ProductParameters
     {
@@ -22,5 +18,6 @@ namespace Entities.RequestFeatures
         }
 
         public string SearchTerm { get; set; }
+        public string OrderBy { get; set; } = "name";
     }
 }
