@@ -1,4 +1,5 @@
 ﻿using BlazorProducts.Server.Repository;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -23,6 +24,19 @@ namespace BlazorProducts.Server.Controllers
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(products.MetaData));
 
             return Ok(products);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct([FromBody] Product product)
+        {
+            if (product == null)
+                return BadRequest();
+
+            //model validation…
+
+            await _repo.CreateProduct(product);
+
+            return Created("", product);
         }
     }
 }

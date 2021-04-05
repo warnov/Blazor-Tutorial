@@ -144,7 +144,42 @@ The component has an event callback. This means that any container that implemen
 	`<Search OnSearchChanged="SearchChanged"/>`<br>
 In this case, the component has an event callback called `OnSearchChanged` and the container has a method called `SearchChanged` that will be executed when the component trigger the event.<br>
 How do you trigger (invoke) that event from the component?<br>
-`await OnSortChanged.InvokeAsync(eventArgs.Value.ToString());`
+`await OnSortChanged.InvokeAsync(eventArgs.Value.ToString());`<br>
+
+## INSERTION (Post)
+To insert a new product in the DB, the `HttpRepository` must be updated with a creation operation both at the interface and at the implementation level. The implementation consists in sending the object to the server simply. To read the new object a new page will be needed with the form to get the data. `Blazor` supports `http forms` through the `EditForm` component  who has its OnSubmit even that will do the post calling the correspondent method in the `code-behind`.<br>
+It has an attribute called `Model` and you can bind it with and object from the `code-behind` class. And every input can be bound to a field in that model using `@bind-Value`. `Blazor` also offer components to input data such as `InputText, InputNumber, InputCheckBox, InputDate, InputSelect…` 
+
+### Validation
+The validation for the insertion is done through annotations on the model of the object to be validated. This annotations are installed through:<br>
+`PM> Install-Package System.ComponentModel.` Annotations`<br>
+
+An annotation has this format:<br>
+```
+[Range(1, double.MaxValue, ErrorMessage = "Value for the Price can't be lower than 1")]
+public double Price { get; set; }
+```
+After the model has been *validation enabled* the `<DataAnnotationsValidator />` component should be added inside the form and the validation message components are placed where convenient using this format
+```
+<ValidationMessage For="@(() => _product.Name)"
+```
+A `ValidationSummary` is also available.<br>
+For the validation to work is important to change the `OnSubmit` for the `OnValidSubmit` event in the form.
+
+### Pop-ups
+Blazor can handle popups. A popup is a `razor` component with special CSS styles. In the `code-behind` it basically has some properties and the `Show()` and `Hide()` methods. This methods make use of the `StateChanged()` component event to be able to re-paint the UI whenever a pop up appears.
+
+### @ref Attribute
+This attribute in a component declaration in a container, makes possible to have a reference to a component object declared in the `code-behind` of the container, so in the class, you can manipulate it more easily, than having to configure it just by the declaration in the `.razor` file.<br>
+## IMAGE UPLOADING
+`ASP.NET Core` offers a functionality inside their `HTTP` libraries that allow to send and receive whole files through the `Request.Form.Files` so they don't need to be string serialized. You can construct your backend using this advantage.<br>
+Then, from the client side to use these facilities from Blazor over `netstandard` you can use `Tewr.Blazor.FileReader` to facilitate the process of reading and sending the content. But if working with `Net 5` then the native `InputFile` will do the work withoun any problem as stated [here](https://code-maze.com/blazor-webassembly-file-upload/).<br>
+Continuing with the `netstandard` case, int will be needed to register the file service in the `Program class`. After this, the `IProductHttpRepository` is modified by adding the method to upload the file. This method will receive a `MultipartFormDataContent content` (the file per sé),. The implementation will simply post the request with the specified content to the `backend`.<br>
+### Upload component
+It just consist of an `input` type file responding to the `@onChange` element to load the file in memory and sending it to the backend.<br>
+The component class should be injected not only with the HTTP service, but also with the `FileReader` services registered before. The logic of loading the file in memory is just a standard procedure that can be reviewed in the previous link.
+
+
 
 
 

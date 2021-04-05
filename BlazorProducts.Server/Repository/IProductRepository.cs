@@ -8,5 +8,7 @@ namespace BlazorProducts.Server.Repository
     public interface IProductRepository
     {
         Task<PagedList<Product>> GetProducts(ProductParameters productParameters);
+        //This is an async void method that must be implemented
+        Task CreateProduct(Product product);
     }
 }

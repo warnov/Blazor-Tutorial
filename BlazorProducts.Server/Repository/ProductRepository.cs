@@ -17,6 +17,12 @@ namespace BlazorProducts.Server.Repository
             _context = context;
         }
 
+        public async Task CreateProduct(Product product)
+        {
+            _context.Add(product);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<PagedList<Product>> GetProducts(ProductParameters productParameters)
         {
             var products = await _context.Products
