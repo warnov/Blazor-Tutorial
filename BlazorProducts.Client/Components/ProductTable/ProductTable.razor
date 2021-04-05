@@ -16,26 +16,26 @@
         <tbody>
             @foreach (var product in Products)
             {
-                <tr>
-                    <td>
-                        <img src="@product.ImageUrl" alt="product image" style="width:100px;" />
-                    </td>
-                    <td class="align-middle">
-                        @product.Name
-                    </td>
-                    <td class="align-middle">
-                        @product.Supplier
-                    </td>
-                    <td class="align-middle">
-                        $@product.Price
-                    </td>
-                    <td class="align-middle">
-                        <button type="button" class="btn btn-info">Update</button>
-                    </td>
-                    <td class="align-middle">
-                        <button type="button" class="btn btn-danger">Delete</button>
-                    </td>
-                </tr>
+            <tr>
+                <td>
+                    <img src="@product.ImageUrl" alt="product image" style="width:100px;" />
+                </td>
+                <td class="align-middle">
+                    @product.Name
+                </td>
+                <td class="align-middle">
+                    @product.Supplier
+                </td>
+                <td class="align-middle">
+                    $@product.Price
+                </td>
+                <td class="align-middle">
+                    <button type="button" class="btn btn-info" @onclick="() => RedirectToUpdate(product.Id)">Update</button>
+                </td>
+                <td class="align-middle">
+                    <button type="button" class="btn btn-danger" @onclick="() => Delete(product.Id)">Delete</button>               
+                </td>
+            </tr>
             }
         </tbody>
     </table>

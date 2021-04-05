@@ -177,7 +177,23 @@ Then, from the client side to use these facilities from Blazor over `netstandard
 Continuing with the `netstandard` case, int will be needed to register the file service in the `Program class`. After this, the `IProductHttpRepository` is modified by adding the method to upload the file. This method will receive a `MultipartFormDataContent content` (the file per sé),. The implementation will simply post the request with the specified content to the `backend`.<br>
 ### Upload component
 It just consist of an `input` type file responding to the `@onChange` element to load the file in memory and sending it to the backend.<br>
-The component class should be injected not only with the HTTP service, but also with the `FileReader` services registered before. The logic of loading the file in memory is just a standard procedure that can be reviewed in the previous link.
+The component class should be injected not only with the HTTP service, but also with the `FileReader` services registered before. The logic of loading the file in memory is just a standard procedure that can be reviewed in the previous link.<br>
+
+
+## DELETE
+For the API you can use the DELETE HTTP method. The repo interface must indicate the method, and then implement it in the repo class. After this, a controller action should be added. As with the `update` it will return `NoContent` (202) on success.<br>
+In the client, both repository interface and classes should be modified adding the delete capacity. The class will call the service in the API. The component with the delete button now needs a callback to raise the deletion in the repository. With this callback the razor of the component could be modified to instruct what the button clicked should do: basically tell the container to call the repo deletion and then update the interface. And finally in the container razor update the component reference to call the required method when the callback is triggered.<br>
+
+### Javascrip calls
+A quick and simple method to ask a user for a confirmation is using the interop with Javascript through `IJSRuntime` service, injecting it in the required component.
+```
+ 	var confirmed = await Js.InvokeAsync<bool>("confirm", $"Are you sure you want to delete {product.Name} product?");
+    if(confirmed)
+    {
+        await OnDeleted.InvokeAsync(id);
+    }
+```
+You can then adequate the rest of the components and containers to adjust to the logis of this confirmation for example during the delete operation.
 
 
 
