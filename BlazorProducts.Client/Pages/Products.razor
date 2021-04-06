@@ -2,13 +2,15 @@
 @using BlazorProducts.Client.Components.ProductTable;
 @using BlazorProducts.Client.Components;
 @using Entities.RequestFeatures;
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrator")]
 
 <div class="row">
     <div class="col-md-5">
         <Search OnSearchChanged="SearchChanged" />
     </div>
     <div class="col-md-5">
-        <Sort OnSortChanged="SortChanged"/>
+        <Sort OnSortChanged="SortChanged" />
     </div>
     <div class="col-md-2">
         <a href="/createProduct">Create Product</a>

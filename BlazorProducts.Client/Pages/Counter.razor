@@ -1,6 +1,15 @@
 ﻿@page "/counter"
 @using BlazorProducts.Client.Components
+@using System.Security.Claims
 
+<AuthorizeView Roles="Administrator">
+    <Authorized>        
+        The user: @context.User.FindFirst(ClaimTypes.Name).Value is authorized
+    </Authorized>
+    <NotAuthorized>
+        The User is not authorized
+    </NotAuthorized>
+</AuthorizeView>
 
 
 <CounterPrint CurrentCount="currentCount" Title="Counter" />
@@ -12,8 +21,19 @@
 @code {
     private int currentCount = 0;
 
-    private void IncrementCount()
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+
+    private async void IncrementCount()
     {
-        currentCount++;
+        var authState = await AuthState;
+        var user = authState.User;
+
+
+        if (user.IsInRole("Counter"))
+            currentCount++;
+        else
+            currentCount--;
+
     }
 }

@@ -7,7 +7,7 @@
 
     <h1 id="blazor-webassembly">Blazor WebAssembly</h1>
 <p>These notes are taken following the tutorial found in:
-<a href="https://code-maze.com/blazor-components/">https://code-maze.com/blazor-components/</a></p>
+<a href="https://code-maze.com/blazor-webassembly-series/">https://code-maze.com/blazor-webassembly-series/</a></p>
 <h2 id="components">COMPONENTS</h2>
 <ul>
 <li><p>Are the key pieces in this technology</p>
@@ -131,7 +131,45 @@ The logic for sorting is also added to the backend repository class by using <co
 <code>&lt;Search OnSearchChanged=&quot;SearchChanged&quot;/&gt;</code><br>
 In this case, the component has an event callback called <code>OnSearchChanged</code> and the container has a method called <code>SearchChanged</code> that will be executed when the component trigger the event.<br>
 How do you trigger (invoke) that event from the component?<br>
-<code>await OnSortChanged.InvokeAsync(eventArgs.Value.ToString());</code></p>
+<code>await OnSortChanged.InvokeAsync(eventArgs.Value.ToString());</code><br></p>
+<h2 id="insertion-post">INSERTION (Post)</h2>
+<p>To insert a new product in the DB, the <code>HttpRepository</code> must be updated with a creation operation both at the interface and at the implementation level. The implementation consists in sending the object to the server simply. To read the new object a new page will be needed with the form to get the data. <code>Blazor</code> supports <code>http forms</code> through the <code>EditForm</code> component  who has its OnSubmit even that will do the post calling the correspondent method in the <code>code-behind</code>.<br>
+It has an attribute called <code>Model</code> and you can bind it with and object from the <code>code-behind</code> class. And every input can be bound to a field in that model using <code>@bind-Value</code>. <code>Blazor</code> also offer components to input data such as <code>InputText, InputNumber, InputCheckBox, InputDate, InputSelect…</code></p>
+<h3 id="validation">Validation</h3>
+<p>The validation for the insertion is done through annotations on the model of the object to be validated. This annotations are installed through:<br>
+<code>PM&gt; Install-Package System.ComponentModel.</code> Annotations`<br></p>
+<p>An annotation has this format:<br></p>
+<pre><code>[Range(1, double.MaxValue, ErrorMessage = &quot;Value for the Price can't be lower than 1&quot;)]
+public double Price { get; set; }
+</code></pre>
+<p>After the model has been <em>validation enabled</em> the <code>&lt;DataAnnotationsValidator /&gt;</code> component should be added inside the form and the validation message components are placed where convenient using this format</p>
+<pre><code>&lt;ValidationMessage For=&quot;@(() =&gt; _product.Name)&quot;
+</code></pre>
+<p>A <code>ValidationSummary</code> is also available.<br>
+For the validation to work is important to change the <code>OnSubmit</code> for the <code>OnValidSubmit</code> event in the form.</p>
+<h3 id="pop-ups">Pop-ups</h3>
+<p>Blazor can handle popups. A popup is a <code>razor</code> component with special CSS styles. In the <code>code-behind</code> it basically has some properties and the <code>Show()</code> and <code>Hide()</code> methods. This methods make use of the <code>StateChanged()</code> component event to be able to re-paint the UI whenever a pop up appears.</p>
+<h3 id="ref-attribute">@ref Attribute</h3>
+<p>This attribute in a component declaration in a container, makes possible to have a reference to a component object declared in the <code>code-behind</code> of the container, so in the class, you can manipulate it more easily, than having to configure it just by the declaration in the <code>.razor</code> file.<br></p>
+<h2 id="image-uploading">IMAGE UPLOADING</h2>
+<p><code>ASP.NET Core</code> offers a functionality inside their <code>HTTP</code> libraries that allow to send and receive whole files through the <code>Request.Form.Files</code> so they don't need to be string serialized. You can construct your backend using this advantage.<br>
+Then, from the client side to use these facilities from Blazor over <code>netstandard</code> you can use <code>Tewr.Blazor.FileReader</code> to facilitate the process of reading and sending the content. But if working with <code>Net 5</code> then the native <code>InputFile</code> will do the work withoun any problem as stated <a href="https://code-maze.com/blazor-webassembly-file-upload/">here</a>.<br>
+Continuing with the <code>netstandard</code> case, int will be needed to register the file service in the <code>Program class</code>. After this, the <code>IProductHttpRepository</code> is modified by adding the method to upload the file. This method will receive a <code>MultipartFormDataContent content</code> (the file per sé),. The implementation will simply post the request with the specified content to the <code>backend</code>.<br></p>
+<h3 id="upload-component">Upload component</h3>
+<p>It just consist of an <code>input</code> type file responding to the <code>@onChange</code> element to load the file in memory and sending it to the backend.<br>
+The component class should be injected not only with the HTTP service, but also with the <code>FileReader</code> services registered before. The logic of loading the file in memory is just a standard procedure that can be reviewed in the previous link.<br></p>
+<h2 id="delete">DELETE</h2>
+<p>For the API you can use the DELETE HTTP method. The repo interface must indicate the method, and then implement it in the repo class. After this, a controller action should be added. As with the <code>update</code> it will return <code>NoContent</code> (202) on success.<br>
+In the client, both repository interface and classes should be modified adding the delete capacity. The class will call the service in the API. The component with the delete button now needs a callback to raise the deletion in the repository. With this callback the razor of the component could be modified to instruct what the button clicked should do: basically tell the container to call the repo deletion and then update the interface. And finally in the container razor update the component reference to call the required method when the callback is triggered.<br></p>
+<h3 id="javascrip-calls">Javascrip calls</h3>
+<p>A quick and simple method to ask a user for a confirmation is using the interop with Javascript through <code>IJSRuntime</code> service, injecting it in the required component.</p>
+<pre><code> 	var confirmed = await Js.InvokeAsync&lt;bool&gt;(&quot;confirm&quot;, $&quot;Are you sure you want to delete {product.Name} product?&quot;);
+    if(confirmed)
+    {
+        await OnDeleted.InvokeAsync(id);
+    }
+</code></pre>
+<p>You can then adequate the rest of the components and containers to adjust to the logis of this confirmation for example during the delete operation.</p>
 
 
 </body>

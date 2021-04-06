@@ -1,4 +1,6 @@
+using BlazorProducts.Client.AuthProviders;
 using BlazorProducts.Client.HttpRepository;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -18,6 +20,8 @@ namespace BlazorProducts.Client
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddScoped<IProductHttpRepository, ProductHttpRepository>();
             builder.Services.AddFileReaderService(o => o.UseWasmSharedBuffer = true);
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<AuthenticationStateProvider, TestAuthStateProvider>();
 
             await builder.Build().RunAsync();
         }

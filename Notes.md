@@ -2,7 +2,7 @@
 
 
 These notes are taken following the tutorial found in:
-https://code-maze.com/blazor-components/
+https://code-maze.com/blazor-webassembly-series/
 
 ## COMPONENTS
 
@@ -193,9 +193,64 @@ A quick and simple method to ask a user for a confirmation is using the interop 
         await OnDeleted.InvokeAsync(id);
     }
 ```
-You can then adequate the rest of the components and containers to adjust to the logis of this confirmation for example during the delete operation.
+You can then adequate the rest of the components and containers to adjust to the login of this confirmation for example during the delete operation.<br>
+<br>
+<br>
+<hr/>
 
+## AUTHENTICATION
 
+`Microsoft.AspNetCore.Components.WebAssembly.Authentication` is the package required to make the authentication on the client side. The service must be registered in `Program.cs` as follows:
+```
+builder.Services.AddAuthorizationCore();
+```
+It also ships a base class: `AuthenticationStateProvider` from which we can inherit and create our own auth provider as a client class. The most important method of this class is `GetAuthenticationStateAsync` and returns an `AuthenticationState` with the information its name implies.<br>
+### Authorization States
+These states can be used by any component to show different content in the view to the users:
+* Authorized
+* Non-Authorized
+* Authorizing<br>
 
+For these states to be accessible for the rest of the components, the `App.razor` component must be modified:<br>
+```
+	<Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+    </Found>
+```
+### Context Object
+It allows us to get a reference of the current user and see his information and their authentication status:
+```
+	<Authorized>
+        The user: @context.User.FindFirst(ClaimTypes.Name).Value is authorized
+    </Authorized>
+```
+We can include the Role claims in the whole process if we want. All it takes is to slightly modify the AuthorizeView component:
+```
+<AuthorizeView Roles="Administrator">
+```
+With this setup, it is not enough for a user to just have the authentication type provided, it must be in an exact role as well.<br>
 
+### Protect a whole compnent
+While using the `Authorized` is useful to protect the inner components, the `@attribute [Authorize]` determines the protection of the whole component. It also supports the parameter `Roles`.
+The component to display when there is no authorization cab be set in the `App.razor`:
+```
+    <NotAuthorized>
+        <text> You are not authorized to access this page. </text>
+    </NotAuthorized>
+```
 
+### Accessing Authentication State in the C# Code
+If we want programmatically to execute some actions based on the authentication state of the user, we can do that by using the cascading parameters:
+```
+[CascadingParameter]
+public Task<AuthenticationState> AuthState { get; set; }
+private async void IncrementCount()
+{
+    var authState = await AuthState;
+    var user = authState.User;
+    if (user.Identity.IsAuthenticated)
+        currentCount++;
+	else
+        currentCount--;
+}
+ ```
